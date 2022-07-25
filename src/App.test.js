@@ -91,6 +91,13 @@ test("shows an alert if start time is before 5pm", () => {
   expect(startTime).toBeInTheDocument();
   fireEvent.change(startTime, { target: { value: "16:00" } });
 
+  const bedTime = screen.getByTestId("bed-time");
+  expect(bedTime).toBeInTheDocument();
+  fireEvent.change(bedTime, { target: { value: "18:00" } });
+
+  const endTime = screen.getByTestId("end-time");
+  fireEvent.change(endTime, { target: { value: "20:00" } });
+
   const submit = screen.getByTestId("submit-btn");
   expect(submit).toBeInTheDocument();
   fireEvent.click(submit);
@@ -106,9 +113,15 @@ test("shows an alert if bed time is not between 5PM and 4AM", () => {
   jest.spyOn(global, "alert");
   render(<App />);
 
+  const startTime = screen.getByTestId("start-time");
+  fireEvent.change(startTime, { target: { value: "17:00" } });
+
   const bedTime = screen.getByTestId("bed-time");
   expect(bedTime).toBeInTheDocument();
   fireEvent.change(bedTime, { target: { value: "05:00" } });
+
+  const endTime = screen.getByTestId("end-time");
+  fireEvent.change(endTime, { target: { value: "18:00" } });
 
   const submit = screen.getByTestId("submit-btn");
   expect(submit).toBeInTheDocument();
@@ -125,6 +138,12 @@ test("shows an alert if end time is not between 5PM and 4AM", () => {
   jest.spyOn(global, "alert");
   render(<App />);
 
+  const startTime = screen.getByTestId("start-time");
+  fireEvent.change(startTime, { target: { value: "17:00" } });
+
+  const bedtime = screen.getByTestId("bed-time");
+  fireEvent.change(bedtime, { target: { value: "18:00" } });
+
   const endTime = screen.getByTestId("end-time");
   expect(endTime).toBeInTheDocument();
   fireEvent.change(endTime, { target: { value: "05:00" } });
@@ -137,4 +156,36 @@ test("shows an alert if end time is not between 5PM and 4AM", () => {
   expect(global.alert).toHaveBeenCalledWith(
     "Please enter a end time at or before 4AM"
   );
+});
+
+test("disables submit if any of the form fields are empty", () => {
+  render(<App />);
+
+  const startTime = screen.getByTestId("start-time");
+  fireEvent.change(startTime, { target: { value: "" } });
+
+  const bedtime = screen.getByTestId("bed-time");
+  fireEvent.change(bedtime, { target: { value: "18:00" } });
+
+  const endTime = screen.getByTestId("end-time");
+  fireEvent.change(endTime, { target: { value: "20:00" } });
+
+  const submit = screen.getByTestId("submit-btn");
+  expect(submit).toBeDisabled();
+});
+
+test("submit button is enabled when all form fields are valid", () => {
+  render(<App />);
+
+  const startTime = screen.getByTestId("start-time");
+  fireEvent.change(startTime, { target: { value: "17:00" } });
+
+  const bedtime = screen.getByTestId("bed-time");
+  fireEvent.change(bedtime, { target: { value: "18:00" } });
+
+  const endTime = screen.getByTestId("end-time");
+  fireEvent.change(endTime, { target: { value: "20:00" } });
+
+  const submit = screen.getByTestId("submit-btn");
+  expect(submit).not.toBeDisabled();
 });

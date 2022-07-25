@@ -99,7 +99,11 @@ function App() {
             ></input>
           </div>
           <div className="button-container">
-            <button className="button" data-testid="submit-btn">
+            <button
+              className="button"
+              disabled={!startTime || !bedTime || !endTime}
+              data-testid="submit-btn"
+            >
               Submit
             </button>
           </div>
